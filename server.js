@@ -15,9 +15,9 @@ function readDatabase() {
     return JSON.parse(fileData) || [];
 }
 
-function writeToDatabase(fileData) {
-    const json = JSON.stringify;
-    fs.writeFile('./Develop/db/db.json', json);
+function writeToDatabase(data) {
+    const json = JSON.stringify(data, null, '\t');
+    fs.writeFileSync('./Develop/db/db.json', json);
 }
 
 app.get("/", (req, res) => {
@@ -25,7 +25,8 @@ app.get("/", (req, res) => {
 });
 
 app.get('/api/get-all', (req, res) => {
-
+    const database = readDatabase();
+    res.json(database);
 });
 
 app.post('/api/add-lead', (req, res) => {
@@ -42,12 +43,30 @@ app.post('/api/add-lead', (req, res) => {
 
 });
 
-app.put('/api/update-lead/:id', (req, res) => {
-    
+app.put('/api/update-note/:title', (req, res) => {
+    const database = readDatabase();
+    for (let i = 0; i < database.length; i ++) {
+        const note = database[i]
+
+        if(note.title == req.params.title) {
+            //unsure if needed
+            writeToDatabase(database);
+            res.status(204);
+                return
+        }
+    }
+    res.status(404).end();
 });
 
-app.delete('/api/delete-lead/:id', (req, res) => {
-    
+app.delete('/api/delete-note/:title', (req, res) => {
+    const database = readDatabase();
+    const newData = database.filter(note => note.title != req.params.title)
+    if (database.length == newData.length) {
+        res.status(404).end()
+        return;
+    }
+    writeToDatabase(newData)
+    res.status(200).end();
 });
 
 app.listen(PORT, () => {
