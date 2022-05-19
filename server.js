@@ -43,20 +43,20 @@ app.post('/api/add-lead', (req, res) => {
 
 });
 
-app.put('/api/update-note/:title', (req, res) => {
-    const database = readDatabase();
-    for (let i = 0; i < database.length; i ++) {
-        const note = database[i]
+// app.put('/api/update-note/:title', (req, res) => {
+//     const database = readDatabase();
+//     for (let i = 0; i < database.length; i ++) {
+//         const note = database[i]
 
-        if(note.title == req.params.title) {
-            //unsure if needed
-            writeToDatabase(database);
-            res.status(204);
-                return
-        }
-    }
-    res.status(404).end();
-});
+//         if(note.title == req.params.title) {
+//             //unsure if needed
+//             writeToDatabase(database);
+//             res.status(204);
+//                 return
+//         }
+//     }
+//     res.status(404).end();
+// });
 
 app.delete('/api/delete-note/:title', (req, res) => {
     const database = readDatabase();
