@@ -7,25 +7,25 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static("public"));
 
 function readDatabase() {
-    const fileData = fs.readFileSync('./Develop/db/db.json', 'utf-8')
+    const fileData = fs.readFileSync('./db/db.json', 'utf-8')
     //console.log(fileData)
     return JSON.parse(fileData) || [];
 }
 
 function writeToDatabase(data) {
     const json = JSON.stringify(data, null, '\t');
-    fs.writeFileSync('./Develop/db/db.json', json);
+    fs.writeFileSync('./db/db.json', json);
 }
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'Develop/public', 'index.html'))
+    res.sendFile(path.join(__dirname, './public', 'index.html'))
 });
 
 app.get("/notes", (req,res) => {
-    res.sendFile(path.join(__dirname, './Develop/public', 'notes.html')
+    res.sendFile(path.join(__dirname, './public', 'notes.html')
 )});
 
 app.get('/api/get-all', (req, res) => {
@@ -33,7 +33,7 @@ app.get('/api/get-all', (req, res) => {
     res.json(database);
 });
 
-app.post('/api/add-lead', (req, res) => {
+app.post('/api/add-note', (req, res) => {
     const newNote = {...req.body}
     
     const database = readDatabase();
@@ -62,16 +62,16 @@ app.put('/api/update-note/:title', (req, res) => {
     res.status(404).end();
 });
 
-// app.delete('/api/delete-note/:title', (req, res) => {
-//     const database = readDatabase();
-//     const newData = database.filter(note => note.title != req.params.title)
-//     if (database.length == newData.length) {
-//         res.status(404).end()
-//         return;
-//     }
-//     writeToDatabase(newData)
-//     res.status(200).end();
-// });
+app.delete('/api/delete-note/:title', (req, res) => {
+    const database = readDatabase();
+    const newData = database.filter(note => note.title != req.params.title)
+    if (database.length == newData.length) {
+        res.status(404).end()
+        return;
+    }
+    writeToDatabase(newData)
+    res.status(200).end();
+});
 
 app.listen(PORT, () => {
     console.log(`🌐 listening at http://localhost:${PORT}`)

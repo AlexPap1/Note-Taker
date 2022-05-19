@@ -25,16 +25,18 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
+  //get request for notes
 const getNotes = () =>
-  fetch('/api/notes', {
+  fetch('/api/get-all', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
+  //post request for the notes
 const saveNote = (note) =>
-  fetch('/api/notes', {
+  fetch('/api/add-note', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -42,18 +44,20 @@ const saveNote = (note) =>
     body: JSON.stringify(note),
   });
 
-const deleteNote = (id) =>
-  fetch(`/api/notes/${id}`, {
+  //delete request
+const deleteNote = (title) =>
+  fetch(`/api/delete-note/${title}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
+  //hide save btn 
 const renderActiveNote = () => {
   hide(saveNoteBtn);
 
-  if (activeNote.id) {
+  if (activeNote.title) {
     noteTitle.setAttribute('readonly', true);
     noteText.setAttribute('readonly', true);
     noteTitle.value = activeNote.title;
@@ -66,6 +70,7 @@ const renderActiveNote = () => {
   }
 };
 
+// save note
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
@@ -85,7 +90,7 @@ const handleNoteDelete = (e) => {
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
 
-  if (activeNote.id === noteId) {
+  if (activeNote.title === noteId) {
     activeNote = {};
   }
 
